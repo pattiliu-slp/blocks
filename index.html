@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --surface2: #f7f6f3;
+      --work: #2383e2;
+      --rest: #0f7b6c;
+      --danger: #e03e3e;
+      --text: #37352f;
+      --muted: #9b9a97;
+      --border: #e9e9e7;
+      --border-strong: #c7c6c2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 72px 24px 80px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .card {
+      background: var(--surface);
+      width: 100%;
+      max-width: 560px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card h2 {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    input[type="number"], textarea, input[type="text"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.9375rem;
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    input[type="number"]:focus, textarea:focus, input[type="text"]:focus {
+      border-color: var(--border-strong);
+      box-shadow: 0 0 0 2px rgba(35,131,226,0.12);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, opacity 0.12s;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+    }
+    .btn-primary:hover { background: #1a1915; }
+
+    .btn-success {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+      width: 100%;
+    }
+    .btn-success:hover { background: #1a1915; }
+
+    .btn-danger {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--border);
+      width: 100%;
+    }
+    .btn-danger:hover { background: #eee; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 100%;
+    }
+    .btn-outline:hover { background: var(--surface2); color: var(--text); }
+
+    .btn-stop {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 100%;
+      margin-top: 10px;
+      font-size: 0.8rem;
+    }
+    .btn-stop:hover { color: var(--danger); border-color: var(--danger); background: transparent; }
+
+    /* Timer display */
+    .timer-ring-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 32px 0 28px;
+    }
+
+    .timer-display {
+      font-size: 5rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .timer-display.work-color { color: var(--text); }
+    .timer-display.rest-color { color: var(--rest); }
+
+    .timer-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      background: var(--surface2);
+      border-radius: 99px;
+      height: 3px;
+      overflow: hidden;
+      margin: 0 0 28px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 1s linear;
+    }
+
+    .progress-bar.work { background: var(--text); }
+    .progress-bar.rest { background: var(--rest); }
+
+    /* Task badge */
+    .task-badge {
+      border-left: 3px solid var(--border-strong);
+      padding: 6px 0 6px 14px;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .task-badge span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    /* Log styles */
+    .log-block {
+      border-top: 1px solid var(--border);
+      padding: 16px 0;
+    }
+
+    .log-block:last-child { border-bottom: 1px solid var(--border); }
+
+    .log-block-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .log-block-num {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      min-width: 20px;
+      padding-top: 2px;
+    }
+
+    .log-block-title {
+      font-weight: 500;
+      font-size: 0.9375rem;
+      color: var(--text);
+    }
+
+    .log-block-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .log-field {
+      margin-top: 8px;
+      padding-left: 32px;
+    }
+
+    .log-field-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .log-field-value {
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    .log-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .log-summary > div {
+      padding: 16px 12px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .log-summary > div:last-child { border-right: none; }
+
+    .log-stat-val {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .log-stat-lbl {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      margin-top: 3px;
+    }
+
+    .hidden { display: none !important; }
+
+    .phase-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+      color: var(--muted);
+    }
+
+    .phase-tag.work { color: var(--work); }
+    .phase-tag.rest { color: var(--rest); }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 48px 20px 60px; }
+      .timer-display { font-size: 3.8rem; }
+      .log-summary { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Blocks</h1>
+<p class="subtitle">Small bites · intentional rest</p>
+
+<!-- ═══════════════════════════════ SETUP PHASE ═══════════════════════════════ -->
+<div id="phase-setup" class="card">
+  <h2>New Block</h2>
+  <div class="row">
+    <div class="field">
+      <label for="work-minutes">Work time (min)</label>
+      <input type="number" id="work-minutes" min="1" max="480" value="25" />
+    </div>
+    <div class="field">
+      <label for="rest-minutes">Rest time (min)</label>
+      <input type="number" id="rest-minutes" min="1" max="120" value="5" />
+    </div>
+  </div>
+  <div class="field">
+    <label for="task-desc">Task to accomplish</label>
+    <textarea id="task-desc" rows="3" placeholder="Describe what you plan to work on…"></textarea>
+  </div>
+  <br/>
+  <button class="btn btn-primary" id="btn-start">▶ Start Work Timer</button>
+  <button class="btn btn-stop hidden" id="btn-stop-from-setup">⏹ Stop Working &amp; Generate Log</button>
+</div>
+
+<!-- ═══════════════════════════════ WORK PHASE ════════════════════════════════ -->
+<div id="phase-work" class="card hidden">
+  <span class="phase-tag work">● Work Session</span>
+  <div class="task-badge">
+    <span>Current Task</span>
+    <div id="work-task-display"></div>
+  </div>
+  <div class="timer-ring-wrap">
+    <div class="timer-display work-color" id="work-timer-display">00:00</div>
+    <div class="timer-label">remaining</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar work" id="work-progress" style="width:100%"></div>
+  </div>
+  <button class="btn btn-danger" id="btn-end-early">✓ Done — End Work Session</button>
+  <button class="btn btn-stop" id="btn-stop-from-work">⏹ Stop Working &amp; Generate Log</button>
+</div>
+
+<!-- ════════════════════════════ COMPLETION INPUT PHASE ══════════════════════ -->
+<div id="phase-complete" class="card hidden">
+  <span class="phase-tag work">✓ Work Complete</span>
+  <div class="task-badge">
+    <span>Intended Task</span>
+    <div id="complete-task-display"></div>
+  </div>
+  <div class="field">
+    <label for="work-done">What did you actually accomplish?</label>
+    <textarea id="work-done" rows="4" placeholder="Describe the work completed…"></textarea>
+  </div>
+  <br/>
+  <button class="btn btn-success" id="btn-start-rest">☕ Start Rest Timer</button>
+  <button class="btn btn-stop" id="btn-stop-from-complete">⏹ Stop Working &amp; Generate Log</button>
+</div>
+
+<!-- ═══════════════════════════════ REST PHASE ════════════════════════════════ -->
+<div id="phase-rest" class="card hidden">
+  <span class="phase-tag rest">● Rest &amp; Recharge</span>
+  <div class="timer-ring-wrap">
+    <div class="timer-display rest-color" id="rest-timer-display">00:00</div>
+    <div class="timer-label">remaining</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar rest" id="rest-progress" style="width:100%"></div>
+  </div>
+  <p style="color:var(--muted);font-size:0.875rem;text-align:center;margin-bottom:20px;">
+    Step away, breathe, and let your mind rest.
+  </p>
+  <button class="btn btn-outline" id="btn-skip-rest">Skip Rest →</button>
+  <button class="btn btn-stop" id="btn-stop-from-rest">⏹ Stop Working &amp; Generate Log</button>
+</div>
+
+<!-- ═══════════════════════════════ REST DONE PHASE ══════════════════════════ -->
+<div id="phase-rest-done" class="card hidden">
+  <span class="phase-tag rest">✓ Rest Complete</span>
+  <p style="color:var(--muted);font-size:0.875rem;margin-bottom:24px;">
+    Ready for your next block?
+  </p>
+  <button class="btn btn-primary" id="btn-next-block">▶ Start Next Block</button>
+  <button class="btn btn-stop" id="btn-stop-from-rest-done">⏹ Stop Working &amp; Generate Log</button>
+</div>
+
+<!-- ═══════════════════════════════ LOG PHASE ════════════════════════════════ -->
+<div id="phase-log" class="card hidden">
+  <h2>Session Log</h2>
+  <div class="log-summary" id="log-summary"></div>
+  <div id="log-blocks"></div>
+
+  <hr class="divider"/>
+
+  <p style="color:var(--muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-weight:500;">Export</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+    <button class="btn btn-outline" id="btn-copy-text">📋 Copy as Text</button>
+    <button class="btn btn-outline" id="btn-copy-csv">📊 Copy as CSV</button>
+  </div>
+  <button class="btn btn-outline" id="btn-download-txt" style="margin-bottom:16px;">⬇ Download as .txt</button>
+  <div id="copy-feedback" style="display:none;text-align:center;color:var(--rest);font-size:0.85rem;margin-bottom:12px;"></div>
+
+  <button class="btn btn-primary" id="btn-new-session">+ Start New Session</button>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  const state = {
+    blocks: [],          // completed work/rest blocks
+    currentBlock: null,  // { workMin, restMin, taskDesc, workDone, workElapsed, restElapsed, endedEarly }
+    timerInterval: null,
+    timerStart: null,
+    timerTotal: 0,       // total seconds for current timer
+    timerRemaining: 0,
+    phase: 'setup'       // setup | work | complete | rest | rest-done | log
+  };
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function fmt(secs) {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function show(id) {
+    document.querySelectorAll('[id^="phase-"]').forEach(el => el.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+  }
+
+  function clearTimer() {
+    if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
+  }
+
+  function startCountdown(totalSecs, displayEl, progressEl, onDone) {
+    clearTimer();
+    state.timerTotal = totalSecs;
+    state.timerRemaining = totalSecs;
+    displayEl.textContent = fmt(totalSecs);
+    progressEl.style.width = '100%';
+
+    state.timerInterval = setInterval(() => {
+      state.timerRemaining -= 1;
+      if (state.timerRemaining <= 0) {
+        state.timerRemaining = 0;
+        displayEl.textContent = fmt(0);
+        progressEl.style.width = '0%';
+        clearTimer();
+        onDone();
+        return;
+      }
+      displayEl.textContent = fmt(state.timerRemaining);
+      const pct = (state.timerRemaining / state.timerTotal) * 100;
+      progressEl.style.width = pct + '%';
+    }, 1000);
+  }
+
+  function beep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.2, 0.4].forEach((offset, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = i === 2 ? 880 : 660;
+        gain.gain.setValueAtTime(0.3, ctx.currentTime + offset);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.25);
+        osc.start(ctx.currentTime + offset);
+        osc.stop(ctx.currentTime + offset + 0.3);
+      });
+    } catch(e) {}
+  }
+
+  function generateLog() {
+    clearTimer();
+    show('phase-log');
+    state.phase = 'log';
+
+    const totalWork = state.blocks.reduce((a, b) => a + b.workElapsed, 0);
+    const totalRest = state.blocks.reduce((a, b) => a + (b.restElapsed || 0), 0);
+
+    document.getElementById('log-summary').innerHTML = `
+      <div>
+        <div class="log-stat-val">${state.blocks.length}</div>
+        <div class="log-stat-lbl">Blocks</div>
+      </div>
+      <div>
+        <div class="log-stat-val">${fmt(totalWork)}</div>
+        <div class="log-stat-lbl">Total Work</div>
+      </div>
+      <div>
+        <div class="log-stat-val">${fmt(totalRest)}</div>
+        <div class="log-stat-lbl">Total Rest</div>
+      </div>
+    `;
+
+    const container = document.getElementById('log-blocks');
+    container.innerHTML = '';
+    state.blocks.forEach((b, i) => {
+      const div = document.createElement('div');
+      div.className = 'log-block';
+      div.innerHTML = `
+        <div class="log-block-header">
+          <div class="log-block-num">${i + 1}</div>
+          <div>
+            <div class="log-block-title">${escHtml(b.taskDesc) || '(no task entered)'}</div>
+            <div class="log-block-meta">Work: ${fmt(b.workElapsed)} ${b.endedEarly ? '· ended early' : '· full duration'} &nbsp;|&nbsp; Rest: ${b.restElapsed != null ? fmt(b.restElapsed) : 'skipped / not taken'}</div>
+          </div>
+        </div>
+        <hr class="divider" style="margin:10px 0"/>
+        <div class="log-field">
+          <div class="log-field-label">Accomplished</div>
+          <div class="log-field-value">${escHtml(b.workDone) || '<em style="color:var(--muted)">No notes entered</em>'}</div>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function escHtml(s) {
+    if (!s) return '';
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+
+  // ── Phase transitions ───────────────────────────────────────────────────────
+
+  // SETUP → WORK
+  document.getElementById('btn-start').addEventListener('click', () => {
+    const workMin = parseInt(document.getElementById('work-minutes').value) || 25;
+    const restMin = parseInt(document.getElementById('rest-minutes').value) || 5;
+    const taskDesc = document.getElementById('task-desc').value.trim();
+
+    state.currentBlock = { workMin, restMin, taskDesc, workDone: '', workElapsed: 0, restElapsed: null, endedEarly: false };
+    state.phase = 'work';
+
+    document.getElementById('work-task-display').textContent = taskDesc || '(no task entered)';
+    show('phase-work');
+
+    const workSecs = workMin * 60;
+    startCountdown(
+      workSecs,
+      document.getElementById('work-timer-display'),
+      document.getElementById('work-progress'),
+      () => {
+        // timer expired
+        state.currentBlock.workElapsed = workSecs;
+        state.currentBlock.endedEarly = false;
+        beep();
+        goToComplete();
+      }
+    );
+  });
+
+  // WORK → COMPLETE (early end)
+  document.getElementById('btn-end-early').addEventListener('click', () => {
+    const elapsed = state.timerTotal - state.timerRemaining;
+    state.currentBlock.workElapsed = elapsed;
+    state.currentBlock.endedEarly = true;
+    clearTimer();
+    goToComplete();
+  });
+
+  function goToComplete() {
+    state.phase = 'complete';
+    document.getElementById('complete-task-display').textContent = state.currentBlock.taskDesc || '(no task entered)';
+    document.getElementById('work-done').value = '';
+    show('phase-complete');
+  }
+
+  // COMPLETE → REST
+  document.getElementById('btn-start-rest').addEventListener('click', () => {
+    state.currentBlock.workDone = document.getElementById('work-done').value.trim();
+    state.phase = 'rest';
+    show('phase-rest');
+
+    const restSecs = state.currentBlock.restMin * 60;
+    startCountdown(
+      restSecs,
+      document.getElementById('rest-timer-display'),
+      document.getElementById('rest-progress'),
+      () => {
+        // rest expired
+        state.currentBlock.restElapsed = restSecs;
+        beep();
+        goToRestDone();
+      }
+    );
+  });
+
+  // REST → REST DONE (skip)
+  document.getElementById('btn-skip-rest').addEventListener('click', () => {
+    const elapsed = state.timerTotal - state.timerRemaining;
+    state.currentBlock.restElapsed = elapsed;
+    clearTimer();
+    goToRestDone();
+  });
+
+  function goToRestDone() {
+    state.blocks.push({ ...state.currentBlock });
+    state.currentBlock = null;
+    state.phase = 'rest-done';
+    show('phase-rest-done');
+  }
+
+  // REST DONE → SETUP (next block)
+  document.getElementById('btn-next-block').addEventListener('click', () => {
+    // pre-fill times from previous block
+    const prev = state.blocks[state.blocks.length - 1];
+    if (prev) {
+      document.getElementById('work-minutes').value = prev.workMin;
+      document.getElementById('rest-minutes').value = prev.restMin;
+    }
+    document.getElementById('task-desc').value = '';
+    document.getElementById('btn-stop-from-setup').classList.remove('hidden');
+    state.phase = 'setup';
+    show('phase-setup');
+  });
+
+  // STOP buttons (from any phase)
+  ['btn-stop-from-setup', 'btn-stop-from-work', 'btn-stop-from-complete', 'btn-stop-from-rest', 'btn-stop-from-rest-done']
+    .forEach(id => {
+      document.getElementById(id).addEventListener('click', () => {
+        // if mid-work, capture elapsed
+        if (state.phase === 'work' && state.currentBlock) {
+          const elapsed = state.timerTotal - state.timerRemaining;
+          state.currentBlock.workElapsed = elapsed;
+          state.currentBlock.endedEarly = true;
+          state.currentBlock.workDone = '';
+          state.blocks.push({ ...state.currentBlock });
+          state.currentBlock = null;
+        } else if (state.phase === 'complete' && state.currentBlock) {
+          state.currentBlock.workDone = document.getElementById('work-done').value.trim();
+          state.blocks.push({ ...state.currentBlock });
+          state.currentBlock = null;
+        } else if (state.phase === 'rest' && state.currentBlock) {
+          const elapsed = state.timerTotal - state.timerRemaining;
+          state.currentBlock.restElapsed = elapsed;
+          state.currentBlock.workDone = state.currentBlock.workDone || '';
+          state.blocks.push({ ...state.currentBlock });
+          state.currentBlock = null;
+        }
+        generateLog();
+      });
+    });
+
+  // NEW SESSION
+  document.getElementById('btn-new-session').addEventListener('click', () => {
+    state.blocks = [];
+    state.currentBlock = null;
+    clearTimer();
+    document.getElementById('task-desc').value = '';
+    document.getElementById('work-minutes').value = 25;
+    document.getElementById('rest-minutes').value = 5;
+    document.getElementById('btn-stop-from-setup').classList.add('hidden');
+    state.phase = 'setup';
+    show('phase-setup');
+  });
+
+  // ── Export helpers ──────────────────────────────────────────────────────────
+
+  function buildPlainText() {
+    const totalWork = state.blocks.reduce((a, b) => a + b.workElapsed, 0);
+    const totalRest  = state.blocks.reduce((a, b) => a + (b.restElapsed || 0), 0);
+    const date = new Date().toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+    let lines = [];
+    lines.push('FOCUS SESSION LOG');
+    lines.push('Date: ' + date);
+    lines.push('Blocks completed: ' + state.blocks.length);
+    lines.push('Total work time:  ' + fmt(totalWork));
+    lines.push('Total rest time:  ' + fmt(totalRest));
+    lines.push('');
+    lines.push('─'.repeat(50));
+    state.blocks.forEach((b, i) => {
+      lines.push('');
+      lines.push('Block ' + (i + 1));
+      lines.push('  Task planned:     ' + (b.taskDesc || '(none)'));
+      lines.push('  Work duration:    ' + fmt(b.workElapsed) + (b.endedEarly ? ' (ended early)' : ' (full duration)'));
+      lines.push('  Rest taken:       ' + (b.restElapsed != null ? fmt(b.restElapsed) : 'skipped'));
+      lines.push('  Accomplished:     ' + (b.workDone || '(no notes)'));
+    });
+    lines.push('');
+    lines.push('─'.repeat(50));
+    return lines.join('\n');
+  }
+
+  function buildCSV() {
+    const escape = v => '"' + String(v).replace(/"/g, '""') + '"';
+    const date = new Date().toLocaleDateString();
+    const rows = [
+      ['Date', 'Block #', 'Task Planned', 'Work Duration', 'Ended Early', 'Rest Taken', 'Accomplished']
+    ];
+    state.blocks.forEach((b, i) => {
+      rows.push([
+        date,
+        i + 1,
+        b.taskDesc || '',
+        fmt(b.workElapsed),
+        b.endedEarly ? 'Yes' : 'No',
+        b.restElapsed != null ? fmt(b.restElapsed) : 'skipped',
+        b.workDone || ''
+      ]);
+    });
+    return rows.map(r => r.map(escape).join(',')).join('\r\n');
+  }
+
+  function flashFeedback(msg) {
+    const el = document.getElementById('copy-feedback');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 2500);
+  }
+
+  function copyToClipboard(text, successMsg) {
+    navigator.clipboard.writeText(text).then(() => {
+      flashFeedback(successMsg);
+    }).catch(() => {
+      // fallback for non-secure contexts
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flashFeedback(successMsg);
+    });
+  }
+
+  document.getElementById('btn-copy-text').addEventListener('click', () => {
+    copyToClipboard(buildPlainText(), '✓ Plain text copied to clipboard!');
+  });
+
+  document.getElementById('btn-copy-csv').addEventListener('click', () => {
+    copyToClipboard(buildCSV(), '✓ CSV copied — paste directly into Excel or Google Sheets!');
+  });
+
+  document.getElementById('btn-download-txt').addEventListener('click', () => {
+    const text = buildPlainText();
+    const date = new Date().toISOString().slice(0, 10);
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'focus-log-' + date + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    flashFeedback('✓ File downloaded!');
+  });
+</script>
+</body>
+</html>
